@@ -64,7 +64,7 @@ modern-news-app/
 - [x] Implement stateless JWT token provider (`JwtTokenProvider.java`)
 - [x] Build Spring Boot security UserDetails loader (`CustomUserDetailsService.java`)
 - [x] Build Spring Boot JWT authentication filters & context config
-- [ ] Implement signup, login, and profile controllers
+- [x] Implement signup, login, and profile controllers
 
 ### ⚡ Phase 3: Gateway Setup & External Feeds (Node.js)
 - [x] Create Gateway environment variables loader (`env.ts`)
