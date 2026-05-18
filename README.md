@@ -62,8 +62,8 @@ modern-news-app/
 - [x] Write JPA Preference model (`UserPreference.java`)
 - [x] Establish JPA database repositories (`UserRepository`, `UserPreferenceRepository`)
 - [x] Implement stateless JWT token provider (`JwtTokenProvider.java`)
-- [ ] Build Spring Boot security UserDetails loader (`CustomUserDetailsService.java`)
-- [ ] Build Spring Boot JWT authentication filters & context config
+- [x] Build Spring Boot security UserDetails loader (`CustomUserDetailsService.java`)
+- [x] Build Spring Boot JWT authentication filters & context config
 - [ ] Implement signup, login, and profile controllers
 
 ### ⚡ Phase 3: Gateway Setup & External Feeds (Node.js)
