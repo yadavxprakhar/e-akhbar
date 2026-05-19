@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { AuthProvider, useAuth } from './store/authContext';
-
-// We will write custom views next. For now, let's establish simple layout bindings.
+import { LoginPage } from './pages/LoginPage';
+import { RegisterPage } from './pages/RegisterPage';
 const MainAppContent: React.FC = () => {
     const { user, loading, logout, toggleTheme, preferences } = useAuth();
     const [activeView, setActiveView] = useState<'news' | 'bookmarks'>('news');
@@ -16,34 +16,12 @@ const MainAppContent: React.FC = () => {
         );
     }
 
-    // 1. Unauthenticated Gateway Views (Displays placeholder or clean login/signup triggers)
+    // 1. Unauthenticated Gateway Views (Displays premium glassmorphism forms)
     if (!user) {
-        return (
-            <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px', backgroundColor: 'hsl(var(--background))' }}>
-                <div className="glass-panel" style={{ maxWidth: '400px', width: '100%', padding: '32px', textAlign: 'center' }}>
-                    <div style={{ fontSize: '3rem', marginBottom: '16px' }}>📰</div>
-                    <h1 style={{ fontSize: '1.8rem', marginBottom: '8px', color: 'hsl(var(--foreground))' }}>Modern News Portal</h1>
-                    <p style={{ color: 'hsl(var(--muted))', fontSize: '0.95rem', marginBottom: '24px' }}>
-                        A secure, high-performance decoupled full-stack portal mapping live global summaries.
-                    </p>
-
-                    {showLogin ? (
-                        <div>
-                            {/* Placeholder Login Form triggers */}
-                            <p style={{ fontSize: '0.9rem', color: 'hsl(var(--muted))', marginBottom: '16px' }}>Please run visual login setups to access customizable categories.</p>
-                            <button className="btn btn-primary" style={{ width: '100%' }} onClick={() => setShowLogin(false)}>
-                                Setup Visual Form Pages
-                            </button>
-                        </div>
-                    ) : (
-                        <div>
-                            <button className="btn btn-secondary" style={{ width: '100%' }} onClick={() => setShowLogin(true)}>
-                                Back to Portal Login
-                            </button>
-                        </div>
-                    )}
-                </div>
-            </div>
+        return showLogin ? (
+            <LoginPage onSwitchToRegister={() => setShowLogin(false)} />
+        ) : (
+            <RegisterPage onSwitchToLogin={() => setShowLogin(true)} />
         );
     }
 

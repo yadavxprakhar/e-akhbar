@@ -79,7 +79,7 @@ modern-news-app/
 - [x] Map Outfit & typography styles
 - [x] Configure Axios clients with JWT auto-refresh interceptors
 - [ ] Build global state store (`authStore.ts`)
-- [ ] Create login and registration visual pages
+- [x] Create login and registration visual pages
 
 ### 📰 Phase 5: Dashboard, Bookmarks & Final Polish
 - [ ] Build breaking category tag filters
