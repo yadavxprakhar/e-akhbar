@@ -52,7 +52,7 @@ modern-news-app/
 - [x] Create root `.gitignore` rules
 - [x] Configure PostgreSQL and Redis in `docker-compose.yml`
 - [x] Design relational database schemas in `database/init.sql`
-- [ ] Establish backend and frontend workspace folders
+- [x] Establish backend and frontend workspace folders
 - [x] Write Spring Boot microservice build dependencies (`pom.xml`)
 - [x] Write Node.js Express API Gateway configurations (`package.json`, `tsconfig.json`)
 
@@ -68,8 +68,8 @@ modern-news-app/
 
 ### ⚡ Phase 3: Gateway Setup & External Feeds (Node.js)
 - [x] Create Gateway environment variables loader (`env.ts`)
-- [ ] Implement Redis server integration
-- [ ] Establish rate limiters and helmet shields
+- [x] Implement Redis server integration
+- [x] Establish rate limiters and helmet shields
 - [ ] Build external NewsAPI client and cached request pipeline
 - [ ] Design mock-news article fallbacks
 - [ ] Configure Spring Boot routing gateway proxy
