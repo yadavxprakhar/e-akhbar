@@ -76,8 +76,8 @@ modern-news-app/
 
 ### ⚛️ Phase 4: Client Shell & Authentication (React)
 - [x] Initialize React + TS scaffold
-- [ ] Map Outfit & typography styles
-- [ ] Configure Axios clients with JWT auto-refresh interceptors
+- [x] Map Outfit & typography styles
+- [x] Configure Axios clients with JWT auto-refresh interceptors
 - [ ] Build global state store (`authStore.ts`)
 - [ ] Create login and registration visual pages
 
