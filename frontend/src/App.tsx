@@ -24,6 +24,12 @@ const MainAppContent: React.FC = () => {
         }
     }, [user, activeView]);
 
+    // Preload auth background image immediately so login/signup page shows it instantly
+    React.useEffect(() => {
+        const img = new Image();
+        img.src = '/auth-illustration.png';
+    }, []);
+
     // 1. Initialize our caching news loader and persistent bookmarks sync hooks
     const { 
         articles, 
