@@ -241,7 +241,7 @@ a {
 .auth-container {
   display: flex;
   min-height: 100vh;
-  padding-top: 120px; /* Breathing room below floating navbar */
+  padding-top: 92px; /* Just clears the floating navbar (72px height + 20px gap) */
   padding-bottom: 40px; /* Breathing room at the bottom */
   box-sizing: border-box;
   width: 100%;
@@ -277,13 +277,13 @@ a {
   position: relative;
   z-index: 2;
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* Anchors to top so it sits just under navbar */
   justify-content: center;
   padding: 2.5rem;
   width: 100%;
   max-width: 480px;
-  margin: auto 8vw auto auto; /* Centers vertically, pushes left from right edge */
-  border-radius: var(--radius-xl);
+  margin: 0 8vw 0 auto; /* Sits at the top, pushed from right edge */
+  border-radius: 24px; /* Big, premium rounded corners */
   background-color: hsl(var(--card) / 0.75);
   backdrop-filter: blur(28px);
   border: 1px solid hsl(var(--border) / 0.4);
