@@ -12,9 +12,14 @@ import { DevModeToggle } from './components/DevModeToggle';
 
 const MainAppContent: React.FC = () => {
     const { user, loading: authLoading, logout, toggleTheme, preferences } = useAuth();
-    const [activeView, setActiveView] = useState<'news' | 'bookmarks'>('news');
-    const [showLogin, setShowLogin] = useState<boolean>(true);
+    const [activeView, setActiveView] = useState<'news' | 'bookmarks' | 'login' | 'register'>('news');
     const [isPrefsOpen, setIsPrefsOpen] = useState<boolean>(false);
+
+    React.useEffect(() => {
+        if (user && (activeView === 'login' || activeView === 'register')) {
+            setActiveView('news');
+        }
+    }, [user, activeView]);
 
     // 1. Initialize our caching news loader and persistent bookmarks sync hooks
     const { 
@@ -44,19 +49,16 @@ const MainAppContent: React.FC = () => {
         );
     }
 
-    // 3. Render unauthenticated login/register panels
-    if (!user) {
-        return showLogin ? (
-            <LoginPage onSwitchToRegister={() => setShowLogin(false)} />
-        ) : (
-            <RegisterPage onSwitchToLogin={() => setShowLogin(true)} />
-        );
-    }
+    // Removed global unauthenticated block
 
     /**
      * Intercepts bookmark star clicks to dynamically add or delete persistent records in PostgreSQL
      */
     const handleBookmarkToggle = async (article: any) => {
+        if (!user) {
+            setActiveView('login');
+            return;
+        }
         const bookmarkedId = getBookmarkedId(article.url);
         if (bookmarkedId) {
             await removeBookmark(bookmarkedId);
@@ -89,18 +91,30 @@ const MainAppContent: React.FC = () => {
                     <button className={`btn ${activeView === 'news' ? 'btn-primary' : 'btn-secondary'}`} style={{ padding: '8px 16px', fontSize: '0.85rem' }} onClick={() => setActiveView('news')}>
                         Discover
                     </button>
-                    <button className={`btn ${activeView === 'bookmarks' ? 'btn-primary' : 'btn-secondary'}`} style={{ padding: '8px 16px', fontSize: '0.85rem' }} onClick={() => setActiveView('bookmarks')}>
+                    <button className={`btn ${activeView === 'bookmarks' ? 'btn-primary' : 'btn-secondary'}`} style={{ padding: '8px 16px', fontSize: '0.85rem' }} onClick={() => {
+                        if (!user) setActiveView('login');
+                        else setActiveView('bookmarks');
+                    }}>
                         Bookmarks
                     </button>
-                    <button className="btn btn-secondary" style={{ padding: '8px 14px', fontSize: '0.85rem' }} onClick={() => setIsPrefsOpen(true)}>
+                    <button className="btn btn-secondary" style={{ padding: '8px 14px', fontSize: '0.85rem' }} onClick={() => {
+                        if (!user) setActiveView('login');
+                        else setIsPrefsOpen(true);
+                    }}>
                         ⚙️ Settings
                     </button>
                     <button className="btn btn-secondary" style={{ padding: '8px 14px', fontSize: '0.85rem' }} onClick={toggleTheme}>
                         {preferences?.theme === 'light' ? '🌙 Mode' : '☀️ Mode'}
                     </button>
-                    <button className="btn btn-secondary" style={{ padding: '8px 14px', fontSize: '0.85rem', borderColor: 'hsl(var(--danger) / 0.4)', color: 'hsl(var(--danger))' }} onClick={logout}>
-                        Logout
-                    </button>
+                    {user ? (
+                        <button className="btn btn-secondary" style={{ padding: '8px 14px', fontSize: '0.85rem', borderColor: 'hsl(var(--danger) / 0.4)', color: 'hsl(var(--danger))' }} onClick={logout}>
+                            Logout
+                        </button>
+                    ) : (
+                        <button className="btn btn-primary" style={{ padding: '8px 14px', fontSize: '0.85rem' }} onClick={() => setActiveView('login')}>
+                            Login
+                        </button>
+                    )}
                 </div>
             </header>
 
@@ -111,12 +125,13 @@ const MainAppContent: React.FC = () => {
                 <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '32px', flexWrap: 'wrap', gap: '16px' }}>
                     <div>
                         <h1 style={{ fontSize: '2.2rem', fontWeight: 800, marginBottom: '6px' }}>
-                            {activeView === 'news' ? 'Custom News Feed' : 'Your Bookmarks'}
+                            {activeView === 'news' ? 'Custom News Feed' : activeView === 'bookmarks' ? 'Your Bookmarks' : activeView === 'login' ? 'Sign In' : 'Create Account'}
                         </h1>
                         <p style={{ color: 'hsl(var(--muted))' }}>
                             {activeView === 'news' 
-                                ? `Welcome, ${user.username}! Explore breaking stories or customize interests in settings.` 
-                                : 'Persistently cached summaries saved on your profile.'
+                                ? (user ? `Welcome, ${user.username}! Explore breaking stories or customize interests in settings.` : 'Explore breaking stories and the latest updates.') 
+                                : activeView === 'bookmarks' ? 'Persistently cached summaries saved on your profile.'
+                                : 'Join to access personalized features and saved news.'
                             }
                         </p>
                     </div>
@@ -131,7 +146,15 @@ const MainAppContent: React.FC = () => {
                 )}
 
                 {/* Active grid display */}
-                {isLoading ? (
+                {activeView === 'login' ? (
+                    <div style={{ margin: '-40px -24px' }}>
+                        <LoginPage onSwitchToRegister={() => setActiveView('register')} />
+                    </div>
+                ) : activeView === 'register' ? (
+                    <div style={{ margin: '-40px -24px' }}>
+                        <RegisterPage onSwitchToLogin={() => setActiveView('login')} />
+                    </div>
+                ) : isLoading ? (
                     // Beautiful loading skeleton loader grid
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '30px' }}>
                         {[1, 2, 3].map((n) => (

@@ -9,7 +9,7 @@ export default defineConfig({
     proxy: {
       // Route all '/api' requests transparently to the Node.js API Gateway on Port 5000
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'http://localhost:5001',
         changeOrigin: true,
         secure: false
       }
