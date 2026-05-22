@@ -12,7 +12,7 @@ import { DevModeToggle } from './components/DevModeToggle';
 
 const MainAppContent: React.FC = () => {
     const { user, loading: authLoading, logout, toggleTheme, preferences } = useAuth();
-    const [activeView, setActiveView] = useState<'news' | 'bookmarks' | 'login' | 'register'>('news');
+    const [activeView, setActiveView] = useState<'news' | 'bookmarks' | 'login' | 'register' | 'more_news'>('news');
     const [isPrefsOpen, setIsPrefsOpen] = useState<boolean>(false);
 
     React.useEffect(() => {
@@ -27,7 +27,8 @@ const MainAppContent: React.FC = () => {
         category, 
         loading: newsLoading, 
         setCategory, 
-        setSearchQuery 
+        setSearchQuery,
+        refresh
     } = useNews('general');
 
     const { 
@@ -88,7 +89,10 @@ const MainAppContent: React.FC = () => {
 
                 {/* Navigation Items */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <button className={`btn ${activeView === 'news' ? 'btn-primary' : 'btn-secondary'}`} style={{ padding: '8px 16px', fontSize: '0.85rem' }} onClick={() => setActiveView('news')}>
+                    <button className="btn btn-secondary" style={{ padding: '8px 14px', fontSize: '0.85rem' }} onClick={refresh} title="Refresh Feed">
+                        🔄 Refresh
+                    </button>
+                    <button className={`btn ${activeView === 'news' || activeView === 'more_news' ? 'btn-primary' : 'btn-secondary'}`} style={{ padding: '8px 16px', fontSize: '0.85rem' }} onClick={() => setActiveView('news')}>
                         Discover
                     </button>
                     <button className={`btn ${activeView === 'bookmarks' ? 'btn-primary' : 'btn-secondary'}`} style={{ padding: '8px 16px', fontSize: '0.85rem' }} onClick={() => {
@@ -125,10 +129,10 @@ const MainAppContent: React.FC = () => {
                 <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '32px', flexWrap: 'wrap', gap: '16px' }}>
                     <div>
                         <h1 style={{ fontSize: '2.2rem', fontWeight: 800, marginBottom: '6px' }}>
-                            {activeView === 'news' ? 'Custom News Feed' : activeView === 'bookmarks' ? 'Your Bookmarks' : activeView === 'login' ? 'Sign In' : 'Create Account'}
+                            {activeView === 'news' ? 'Custom News Feed' : activeView === 'more_news' ? 'All Live Articles' : activeView === 'bookmarks' ? 'Your Bookmarks' : activeView === 'login' ? 'Sign In' : 'Create Account'}
                         </h1>
                         <p style={{ color: 'hsl(var(--muted))' }}>
-                            {activeView === 'news' 
+                            {activeView === 'news' || activeView === 'more_news'
                                 ? (user ? `Welcome, ${user.username}! Explore breaking stories or customize interests in settings.` : 'Explore breaking stories and the latest updates.') 
                                 : activeView === 'bookmarks' ? 'Persistently cached summaries saved on your profile.'
                                 : 'Join to access personalized features and saved news.'
@@ -137,11 +141,11 @@ const MainAppContent: React.FC = () => {
                     </div>
 
                     {/* Show Search bar only in the active discovery news feed */}
-                    {activeView === 'news' && <SearchBar onSearch={setSearchQuery} />}
+                    {(activeView === 'news' || activeView === 'more_news') && <SearchBar onSearch={setSearchQuery} />}
                 </div>
 
                 {/* Sub-Filters Badge Grid */}
-                {activeView === 'news' && (
+                {(activeView === 'news' || activeView === 'more_news') && (
                     <CategoryFilter currentCategory={category} onSelectCategory={setCategory} />
                 )}
 
@@ -169,6 +173,40 @@ const MainAppContent: React.FC = () => {
                 ) : activeView === 'news' ? (
                     // Discover Feeds Grid
                     articles.length > 0 ? (
+                        <>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '30px' }}>
+                                {articles.slice(0, 10).map((art) => (
+                                    <ArticleCard
+                                        key={art.url}
+                                        article={art}
+                                        isBookmarked={isBookmarked(art.url)}
+                                        onToggleBookmark={() => handleBookmarkToggle(art)}
+                                    />
+                                ))}
+                            </div>
+                            {articles.length > 10 && (
+                                <div style={{ textAlign: 'center', marginTop: '40px' }}>
+                                    <button className="btn btn-primary" style={{ padding: '12px 32px', fontSize: '1rem', borderRadius: '30px' }} onClick={() => setActiveView('more_news')}>
+                                        See More Articles ↓
+                                    </button>
+                                </div>
+                            )}
+                        </>
+                    ) : (
+                        <div className="glass-panel" style={{ padding: '60px 40px', textAlign: 'center', color: 'hsl(var(--muted))' }}>
+                            <div style={{ fontSize: '3.5rem', marginBottom: '16px' }}>📭</div>
+                            <h3>No articles matched your criteria</h3>
+                            <p style={{ fontSize: '0.9rem', marginTop: '6px' }}>Try switching categories or clearing search keywords.</p>
+                        </div>
+                    )
+                ) : activeView === 'more_news' ? (
+                    // All articles grid
+                    <>
+                        <div style={{ marginBottom: '24px' }}>
+                            <button className="btn btn-secondary" style={{ padding: '8px 16px', fontSize: '0.9rem' }} onClick={() => setActiveView('news')}>
+                                ← Back to Top Headlines
+                            </button>
+                        </div>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '30px' }}>
                             {articles.map((art) => (
                                 <ArticleCard
@@ -179,13 +217,7 @@ const MainAppContent: React.FC = () => {
                                 />
                             ))}
                         </div>
-                    ) : (
-                        <div className="glass-panel" style={{ padding: '60px 40px', textAlign: 'center', color: 'hsl(var(--muted))' }}>
-                            <div style={{ fontSize: '3.5rem', marginBottom: '16px' }}>📭</div>
-                            <h3>No articles matched your criteria</h3>
-                            <p style={{ fontSize: '0.9rem', marginTop: '6px' }}>Try switching categories or clearing search keywords.</p>
-                        </div>
-                    )
+                    </>
                 ) : (
                     // Bookmarks Saved Feed Grid
                     bookmarks.length > 0 ? (

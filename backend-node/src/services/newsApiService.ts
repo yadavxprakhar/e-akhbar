@@ -53,7 +53,7 @@ export class NewsApiService {
                         q: query || undefined,
                         apiKey: config.newsApiKey,
                         language: 'en',
-                        pageSize: 10
+                        pageSize: 100
                     }
                 });
 
