@@ -89,22 +89,22 @@ const MainAppContent: React.FC = () => {
             <header 
                 style={{ 
                     position: 'fixed', 
-                    top: activeView === 'login' || activeView === 'register' ? '0' : '16px', 
+                    top: '16px', 
                     left: '50%',
                     transform: 'translateX(-50%)',
-                    width: activeView === 'login' || activeView === 'register' ? '100%' : 'calc(100% - 48px)',
-                    maxWidth: activeView === 'login' || activeView === 'register' ? 'none' : '1200px',
+                    width: 'calc(100% - 48px)',
+                    maxWidth: '1200px',
                     zIndex: 50, 
-                    borderRadius: activeView === 'login' || activeView === 'register' ? '0' : '50px', 
-                    border: activeView === 'login' || activeView === 'register' ? 'none' : '1px solid hsl(var(--border) / 0.4)',
+                    borderRadius: '50px', 
+                    border: activeView === 'login' || activeView === 'register' ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid hsl(var(--border) / 0.4)',
                     padding: '12px 24px', 
                     display: 'flex', 
                     alignItems: 'center', 
                     justifyContent: 'space-between',
-                    backgroundColor: activeView === 'login' || activeView === 'register' ? 'transparent' : 'hsl(var(--card) / 0.65)',
-                    backdropFilter: activeView === 'login' || activeView === 'register' ? 'none' : 'blur(16px)',
-                    WebkitBackdropFilter: activeView === 'login' || activeView === 'register' ? 'none' : 'blur(16px)',
-                    boxShadow: activeView === 'login' || activeView === 'register' ? 'none' : '0 8px 32px -8px rgba(0, 0, 0, 0.3)',
+                    backgroundColor: activeView === 'login' || activeView === 'register' ? 'rgba(0, 0, 0, 0.4)' : 'hsl(var(--card) / 0.65)',
+                    backdropFilter: 'blur(16px)',
+                    WebkitBackdropFilter: 'blur(16px)',
+                    boxShadow: '0 8px 32px -8px rgba(0, 0, 0, 0.3)',
                     transition: 'all 0.3s ease'
                 }}
             >
