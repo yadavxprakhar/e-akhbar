@@ -54,6 +54,8 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) =
 
     return (
         <div className="auth-container">
+            <img src="/auth-illustration.png" alt="3D illustration" className="auth-illustration" />
+            <div className="auth-overlay"></div>
             {/* Form Panel */}
             <div className="auth-form-panel">
                 <div className="auth-form-container">
@@ -169,30 +171,6 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) =
                 </div>
             </div>
 
-            {/* Visual Panel for Premium Aesthetic (Right side for Register) */}
-            <div className="auth-visual-panel">
-                <div className="auth-visual-overlay"></div>
-                
-                {/* Top Branding */}
-                <div className="auth-visual-content">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <Newspaper size={32} color="hsl(var(--primary))" />
-                        <span style={{ fontSize: '1.5rem', fontWeight: 800, fontFamily: 'var(--font-heading)' }}>
-                            NexusPortal
-                        </span>
-                    </div>
-                </div>
-
-                {/* Bottom Value Proposition */}
-                <div className="auth-visual-content" style={{ paddingBottom: '2rem' }}>
-                    <h2 style={{ fontSize: '3rem', fontWeight: 800, lineHeight: 1.1, marginBottom: '16px', maxWidth: '500px' }}>
-                        Your news, your rules.
-                    </h2>
-                    <p style={{ fontSize: '1.2rem', color: 'rgba(255,255,255,0.7)', maxWidth: '400px' }}>
-                        Create a free profile to track industries, save bookmarks, and connect with global insights instantly.
-                    </p>
-                </div>
-            </div>
         </div>
     );
 };

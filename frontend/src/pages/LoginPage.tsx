@@ -41,31 +41,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSwitchToRegister }) => {
 
     return (
         <div className="auth-container">
-            {/* Visual Panel for Premium Aesthetic */}
-            <div className="auth-visual-panel">
-                <div className="auth-visual-overlay"></div>
-                
-                {/* Top Branding */}
-                <div className="auth-visual-content">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <Newspaper size={32} color="hsl(var(--primary))" />
-                        <span style={{ fontSize: '1.5rem', fontWeight: 800, fontFamily: 'var(--font-heading)' }}>
-                            NexusPortal
-                        </span>
-                    </div>
-                </div>
-
-                {/* Bottom Value Proposition */}
-                <div className="auth-visual-content" style={{ paddingBottom: '2rem' }}>
-                    <h2 style={{ fontSize: '3rem', fontWeight: 800, lineHeight: 1.1, marginBottom: '16px', maxWidth: '500px' }}>
-                        Stay ahead of the curve.
-                    </h2>
-                    <p style={{ fontSize: '1.2rem', color: 'rgba(255,255,255,0.7)', maxWidth: '400px' }}>
-                        Experience real-time, curated insights tailored exactly to your industry and interests.
-                    </p>
-                </div>
-            </div>
-
+            <img src="/auth-illustration.png" alt="3D illustration" className="auth-illustration" />
+            <div className="auth-overlay"></div>
             {/* Form Panel */}
             <div className="auth-form-panel">
                 <div className="auth-form-container">
