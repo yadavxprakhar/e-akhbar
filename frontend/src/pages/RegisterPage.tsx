@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../store/authContext';
+import { User, Mail, Lock, ArrowRight, Loader2, Newspaper } from 'lucide-react';
 
 interface RegisterPageProps {
     onSwitchToLogin: () => void;
@@ -52,104 +53,144 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) =
     };
 
     return (
-        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', backgroundColor: 'hsl(var(--background))' }}>
-            <div className="glass-panel" style={{ maxWidth: '420px', width: '100%', padding: '40px', boxShadow: 'var(--shadow-premium)' }}>
-                {/* Header Logo */}
-                <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-                    <div style={{ fontSize: '3.2rem', marginBottom: '12px', display: 'inline-block', filter: 'drop-shadow(0 0 10px hsl(var(--primary) / 0.35))' }}>📰</div>
-                    <h1 style={{ fontSize: '1.9rem', fontWeight: 800, marginBottom: '6px' }}>Create Account</h1>
-                    <p style={{ color: 'hsl(var(--muted))', fontSize: '0.9rem' }}>Join to unlock interest-based news hubs</p>
+        <div className="auth-container">
+            {/* Form Panel */}
+            <div className="auth-form-panel">
+                <div className="auth-form-container">
+                    <div style={{ marginBottom: '40px' }}>
+                        <h1 style={{ fontSize: '2.2rem', fontWeight: 800, marginBottom: '8px' }}>Create Account</h1>
+                        <p style={{ color: 'hsl(var(--muted))', fontSize: '1rem' }}>Join to unlock interest-based news hubs.</p>
+                    </div>
+
+                    {error && (
+                        <div style={{ padding: '12px 16px', borderRadius: 'var(--radius-md)', backgroundColor: 'hsl(var(--danger) / 0.15)', border: '1px solid hsl(var(--danger) / 0.3)', color: 'hsl(var(--foreground))', fontSize: '0.9rem', fontWeight: 500, marginBottom: '24px', display: 'flex', gap: '10px', alignItems: 'center' }}>
+                            <span>⚠️</span>
+                            <span>{error}</span>
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                        <div>
+                            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: 'hsl(var(--muted))', marginBottom: '8px', fontFamily: 'var(--font-heading)' }}>
+                                USERNAME
+                            </label>
+                            <div className="input-group">
+                                <User size={18} className="input-icon" />
+                                <input
+                                    type="text"
+                                    className="form-input with-icon"
+                                    placeholder="Enter a unique username"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    disabled={loading}
+                                    required
+                                />
+                            </div>
+                            {fieldErrors.username && (
+                                <span style={{ color: 'hsl(var(--danger))', fontSize: '0.75rem', fontWeight: 500, marginTop: '4px', display: 'block' }}>
+                                    * {fieldErrors.username}
+                                </span>
+                            )}
+                        </div>
+
+                        <div>
+                            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: 'hsl(var(--muted))', marginBottom: '8px', fontFamily: 'var(--font-heading)' }}>
+                                EMAIL ADDRESS
+                            </label>
+                            <div className="input-group">
+                                <Mail size={18} className="input-icon" />
+                                <input
+                                    type="email"
+                                    className="form-input with-icon"
+                                    placeholder="you@example.com"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    disabled={loading}
+                                    required
+                                />
+                            </div>
+                            {fieldErrors.email && (
+                                <span style={{ color: 'hsl(var(--danger))', fontSize: '0.75rem', fontWeight: 500, marginTop: '4px', display: 'block' }}>
+                                    * {fieldErrors.email}
+                                </span>
+                            )}
+                        </div>
+
+                        <div>
+                            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: 'hsl(var(--muted))', marginBottom: '8px', fontFamily: 'var(--font-heading)' }}>
+                                PASSWORD
+                            </label>
+                            <div className="input-group">
+                                <Lock size={18} className="input-icon" />
+                                <input
+                                    type="password"
+                                    className="form-input with-icon"
+                                    placeholder="Minimum 6 characters"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    disabled={loading}
+                                    required
+                                />
+                            </div>
+                            {fieldErrors.password && (
+                                <span style={{ color: 'hsl(var(--danger))', fontSize: '0.75rem', fontWeight: 500, marginTop: '4px', display: 'block' }}>
+                                    * {fieldErrors.password}
+                                </span>
+                            )}
+                        </div>
+
+                        <button 
+                            type="submit" 
+                            className="btn btn-primary" 
+                            style={{ width: '100%', padding: '14px 20px', marginTop: '12px', fontSize: '1rem', display: 'flex', justifyContent: 'center' }}
+                            disabled={loading}
+                        >
+                            {loading ? (
+                                <Loader2 size={20} className="animate-spin" style={{ animation: 'spin 2s linear infinite' }} />
+                            ) : (
+                                <>
+                                    Sign Up Free <ArrowRight size={18} style={{ marginLeft: '4px' }} />
+                                </>
+                            )}
+                        </button>
+                    </form>
+
+                    <div style={{ textAlign: 'center', marginTop: '32px', fontSize: '0.95rem', color: 'hsl(var(--muted))' }}>
+                        Already have an active profile?{' '}
+                        <span 
+                            onClick={onSwitchToLogin} 
+                            style={{ color: 'hsl(var(--primary))', fontWeight: 600, cursor: 'pointer', transition: 'color 0.2s ease' }}
+                            onMouseOver={(e) => e.currentTarget.style.color = 'hsl(var(--primary-hover))'}
+                            onMouseOut={(e) => e.currentTarget.style.color = 'hsl(var(--primary))'}
+                        >
+                            Sign In Instead
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Visual Panel for Premium Aesthetic (Right side for Register) */}
+            <div className="auth-visual-panel">
+                <div className="auth-visual-overlay"></div>
+                
+                {/* Top Branding */}
+                <div className="auth-visual-content">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <Newspaper size={32} color="hsl(var(--primary))" />
+                        <span style={{ fontSize: '1.5rem', fontWeight: 800, fontFamily: 'var(--font-heading)' }}>
+                            NexusPortal
+                        </span>
+                    </div>
                 </div>
 
-                {/* Primary Error Dashboard */}
-                {error && (
-                    <div style={{ padding: '12px 16px', borderRadius: 'var(--radius-md)', backgroundColor: 'hsl(var(--danger) / 0.15)', border: '1px solid hsl(var(--danger) / 0.3)', color: 'hsl(var(--foreground))', fontSize: '0.85rem', fontWeight: 500, marginBottom: '20px', display: 'flex', gap: '8px', alignItems: 'center' }}>
-                        <span>⚠️</span>
-                        <span>{error}</span>
-                    </div>
-                )}
-
-                {/* Form */}
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-                    <div>
-                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: 'hsl(var(--muted))', marginBottom: '6px', fontFamily: 'var(--font-heading)' }}>
-                            USERNAME
-                        </label>
-                        <input
-                            type="text"
-                            className="form-input"
-                            placeholder="Enter a unique username"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            disabled={loading}
-                            required
-                        />
-                        {fieldErrors.username && (
-                            <span style={{ color: 'hsl(var(--danger))', fontSize: '0.75rem', fontWeight: 500, marginTop: '4px', display: 'block' }}>
-                                * {fieldErrors.username}
-                            </span>
-                        )}
-                    </div>
-
-                    <div>
-                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: 'hsl(var(--muted))', marginBottom: '6px', fontFamily: 'var(--font-heading)' }}>
-                            EMAIL ADDRESS
-                        </label>
-                        <input
-                            type="email"
-                            className="form-input"
-                            placeholder="you@example.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            disabled={loading}
-                            required
-                        />
-                        {fieldErrors.email && (
-                            <span style={{ color: 'hsl(var(--danger))', fontSize: '0.75rem', fontWeight: 500, marginTop: '4px', display: 'block' }}>
-                                * {fieldErrors.email}
-                            </span>
-                        )}
-                    </div>
-
-                    <div>
-                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: 'hsl(var(--muted))', marginBottom: '6px', fontFamily: 'var(--font-heading)' }}>
-                            PASSWORD
-                        </label>
-                        <input
-                            type="password"
-                            className="form-input"
-                            placeholder="Minimium 6 characters"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            disabled={loading}
-                            required
-                        />
-                        {fieldErrors.password && (
-                            <span style={{ color: 'hsl(var(--danger))', fontSize: '0.75rem', fontWeight: 500, marginTop: '4px', display: 'block' }}>
-                                * {fieldErrors.password}
-                            </span>
-                        )}
-                    </div>
-
-                    <button 
-                        type="submit" 
-                        className="btn btn-primary" 
-                        style={{ width: '100%', padding: '12px 20px', marginTop: '8px' }}
-                        disabled={loading}
-                    >
-                        {loading ? 'Creating Your Account...' : 'Sign Up Free'}
-                    </button>
-                </form>
-
-                {/* Switching */}
-                <div style={{ textAlign: 'center', marginTop: '28px', fontSize: '0.9rem', color: 'hsl(var(--muted))' }}>
-                    Already have an active profile?{' '}
-                    <span 
-                        onClick={onSwitchToLogin} 
-                        style={{ color: 'hsl(var(--primary))', fontWeight: 600, cursor: 'pointer' }}
-                    >
-                        Sign In Instead
-                    </span>
+                {/* Bottom Value Proposition */}
+                <div className="auth-visual-content" style={{ paddingBottom: '2rem' }}>
+                    <h2 style={{ fontSize: '3rem', fontWeight: 800, lineHeight: 1.1, marginBottom: '16px', maxWidth: '500px' }}>
+                        Your news, your rules.
+                    </h2>
+                    <p style={{ fontSize: '1.2rem', color: 'rgba(255,255,255,0.7)', maxWidth: '400px' }}>
+                        Create a free profile to track industries, save bookmarks, and connect with global insights instantly.
+                    </p>
                 </div>
             </div>
         </div>
