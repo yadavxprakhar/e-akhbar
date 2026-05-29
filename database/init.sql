@@ -54,3 +54,14 @@ CREATE TABLE IF NOT EXISTS bookmarks (
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_bookmarks_user ON bookmarks(user_id);
 CREATE INDEX IF NOT EXISTS idx_articles_url ON articles(url);
+
+-- 6. Temporary Registration OTPs Table
+CREATE TABLE IF NOT EXISTS registration_otps (
+    id UUID PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    username VARCHAR(100) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    otp VARCHAR(6) NOT NULL,
+    expiry_time TIMESTAMP NOT NULL
+);
+
