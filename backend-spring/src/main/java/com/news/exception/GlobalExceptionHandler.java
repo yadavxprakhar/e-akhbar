@@ -69,11 +69,12 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGlobalExceptions(Exception ex) {
+        ex.printStackTrace(); // Log the actual stack trace to the console for debugging
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
         body.put("error", "Internal Server Error");
-        body.put("message", "An unexpected system-level error occurred");
+        body.put("message", ex.getMessage() != null ? ex.getMessage() : "An unexpected system-level error occurred");
 
         return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
     }
