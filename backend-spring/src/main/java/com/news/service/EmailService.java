@@ -1,31 +1,31 @@
 package com.news.service;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class EmailService {
 
-    private final JavaMailSender mailSender;
-
-    public EmailService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
-    }
+    @Value("${RESEND_API_KEY:}")
+    private String resendApiKey;
 
     /**
-     * Dispatches a highly styled premium registration OTP email to the user
+     * Dispatches a highly styled premium registration OTP email via Resend's REST API (Port 443 HTTPS)
      */
     public void sendOtpEmail(String toEmail, String username, String otp) {
+        if (resendApiKey == null || resendApiKey.isBlank()) {
+            throw new IllegalStateException("RESEND_API_KEY environment variable is not defined. Please configure Resend REST API keys.");
+        }
+
         try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
-            helper.setTo(toEmail);
-            helper.setSubject("⚡ Verify your e-akhbar Account");
-
             // Premium HTML Email Template styled with professional aesthetics
             String htmlContent = "<div style=\"font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #0d0e12; color: #ffffff; padding: 40px 20px; border-radius: 12px; max-width: 600px; margin: 0 auto; border: 1px solid #1f222e;\">" +
                     "  <div style=\"text-align: center; margin-bottom: 30px;\">" +
@@ -46,13 +46,30 @@ public class EmailService {
                     "  </div>" +
                     "</div>";
 
-            helper.setText(htmlContent, true);
-            mailSender.send(message);
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + resendApiKey);
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-            System.out.println("✓ [OTP EMAIL SERVICE] Premium registration OTP email successfully dispatched to: " + toEmail);
-        } catch (MessagingException e) {
-            System.err.println("✗ [OTP EMAIL SERVICE] Failed to send email to " + toEmail + " due to error: " + e.getMessage());
-            throw new RuntimeException("Email dispatch failed. Please check your system SMTP configurations.", e);
+            // Construct the Resend API Request Payload
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("from", "e-akhbar <onboarding@resend.dev>");
+            payload.put("to", new String[]{toEmail});
+            payload.put("subject", "⚡ Verify your e-akhbar Account");
+            payload.put("html", htmlContent);
+
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(payload, headers);
+            ResponseEntity<String> response = restTemplate.postForEntity("https://api.resend.com/emails", entity, String.class);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                System.out.println("✓ [RESEND EMAIL API] Premium registration OTP successfully dispatched to: " + toEmail);
+            } else {
+                System.err.println("✗ [RESEND EMAIL API] Non-2xx response: " + response.getBody());
+                throw new RuntimeException("Email service responded with failure status: " + response.getStatusCode());
+            }
+        } catch (Exception e) {
+            System.err.println("✗ [RESEND EMAIL API] Failed to send email to " + toEmail + " due to error: " + e.getMessage());
+            throw new RuntimeException("Email dispatch failed. Please check your system RESEND_API_KEY configurations.", e);
         }
     }
 }
