@@ -17,6 +17,8 @@ const MainAppContent: React.FC = () => {
     const [isPrefsOpen, setIsPrefsOpen] = useState<boolean>(false);
     const [moreNewsPage, setMoreNewsPage] = useState<number>(0);
     const [shuffledArticles, setShuffledArticles] = useState<any[]>([]);
+    const [bookmarkFilter, setBookmarkFilter] = useState<string>('All');
+    const [hasInitializedPreferences, setHasInitializedPreferences] = useState<boolean>(false);
 
     React.useEffect(() => {
         if (user && (activeView === 'login' || activeView === 'register')) {
@@ -57,6 +59,14 @@ const MainAppContent: React.FC = () => {
             setShuffledArticles([]);
         }
     }, [articles]);
+
+    // 1.5 Set default category based on user preferences on initial load
+    React.useEffect(() => {
+        if (user && preferences?.favoriteCategories && preferences.favoriteCategories.length > 0 && !hasInitializedPreferences) {
+            setCategory(preferences.favoriteCategories[0].toLowerCase());
+            setHasInitializedPreferences(true);
+        }
+    }, [user, preferences, hasInitializedPreferences, setCategory]);
 
     // 2. Display spinner during initial user auth load
     if (authLoading) {
@@ -151,6 +161,16 @@ const MainAppContent: React.FC = () => {
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
                         )}
                     </button>
+                    {user && (
+                        <>
+                            <button className={`icon-btn ${activeView === 'bookmarks' ? 'active' : ''}`} onClick={() => setActiveView('bookmarks')} title="Your Bookmarks">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+                            </button>
+                            <button className="icon-btn" onClick={() => setIsPrefsOpen(true)} title="Settings">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </button>
+                        </>
+                    )}
                     {user ? (
                         <button className="icon-btn" style={{ color: 'hsl(var(--danger))' }} onClick={logout} title="Logout">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
@@ -285,16 +305,38 @@ const MainAppContent: React.FC = () => {
                 ) : activeView === 'bookmarks' ? (
                     // Bookmarks Saved Feed Grid
                     bookmarks.length > 0 ? (
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '30px' }}>
-                            {bookmarks.map((b) => (
-                                <ArticleCard
-                                    key={b.bookmarkId}
-                                    article={b.article}
-                                    isBookmarked={true}
-                                    onToggleBookmark={() => removeBookmark(b.article.articleId!)}
-                                />
-                            ))}
-                        </div>
+                        <>
+                            <div style={{ marginBottom: '24px', display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '8px' }}>
+                                {['All', ...Array.from(new Set(bookmarks.map(b => b.article.category || 'General')))].map(cat => (
+                                    <button 
+                                        key={cat} 
+                                        onClick={() => setBookmarkFilter(cat)}
+                                        className={`badge ${bookmarkFilter === cat ? 'active' : ''}`}
+                                        style={{ 
+                                            padding: '6px 16px', 
+                                            borderRadius: '20px', 
+                                            border: '1px solid hsl(var(--border))', 
+                                            backgroundColor: bookmarkFilter === cat ? 'hsl(var(--primary))' : 'transparent',
+                                            color: bookmarkFilter === cat ? '#fff' : 'hsl(var(--foreground))',
+                                            cursor: 'pointer',
+                                            whiteSpace: 'nowrap'
+                                        }}
+                                    >
+                                        {cat}
+                                    </button>
+                                ))}
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '30px' }}>
+                                {bookmarks.filter(b => bookmarkFilter === 'All' || (b.article.category || 'General') === bookmarkFilter).map((b) => (
+                                    <ArticleCard
+                                        key={b.bookmarkId}
+                                        article={b.article}
+                                        isBookmarked={true}
+                                        onToggleBookmark={() => removeBookmark(b.article.articleId!)}
+                                    />
+                                ))}
+                            </div>
+                        </>
                     ) : (
                         <div className="glass-panel" style={{ padding: '60px 40px', textAlign: 'center', color: 'hsl(var(--muted))' }}>
                             <div style={{ fontSize: '3.5rem', marginBottom: '16px' }}>⭐️</div>
