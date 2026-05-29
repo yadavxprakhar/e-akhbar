@@ -114,6 +114,7 @@ public class UserService {
 
         // 3. Save pending registration details with the OTP
         RegistrationOtp registrationOtp = RegistrationOtp.builder()
+                .id(java.util.UUID.randomUUID()) // Assign secure manual UUID to prevent database-side sequence generator grammar errors
                 .username(signUpRequest.getUsername())
                 .email(signUpRequest.getEmail())
                 .passwordHash(passwordEncoder.encode(signUpRequest.getPassword()))

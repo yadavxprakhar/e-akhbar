@@ -16,7 +16,6 @@ import java.util.UUID;
 public class RegistrationOtp {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
