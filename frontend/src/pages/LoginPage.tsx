@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../store/authContext';
-import { Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
+import { Mail, Lock, ArrowRight, Loader2, Eye, EyeOff } from 'lucide-react';
 
 interface LoginPageProps {
     onSwitchToRegister: () => void;
@@ -10,6 +10,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSwitchToRegister }) => {
     const { login } = useAuth();
     const [usernameOrEmail, setUsernameOrEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const [showPassword, setShowPassword] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -81,17 +82,42 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSwitchToRegister }) => {
                             <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: 'hsl(var(--muted))', marginBottom: '8px', fontFamily: 'var(--font-heading)' }}>
                                 PASSWORD
                             </label>
-                            <div className="input-group">
+                            <div className="input-group" style={{ position: 'relative' }}>
                                 <Lock size={18} className="input-icon" />
                                 <input
-                                    type="password"
+                                    type={showPassword ? 'text' : 'password'}
                                     className="form-input with-icon"
                                     placeholder="••••••••"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     disabled={loading}
+                                    style={{ paddingRight: '44px' }}
                                     required
                                 />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    style={{
+                                        position: 'absolute',
+                                        right: '12px',
+                                        top: '50%',
+                                        transform: 'translateY(-50%)',
+                                        background: 'none',
+                                        border: 'none',
+                                        color: 'hsl(var(--muted))',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        padding: '4px',
+                                        transition: 'color 0.2s'
+                                    }}
+                                    onMouseOver={(e) => e.currentTarget.style.color = 'hsl(var(--foreground))'}
+                                    onMouseOut={(e) => e.currentTarget.style.color = 'hsl(var(--muted))'}
+                                    disabled={loading}
+                                    tabIndex={-1}
+                                >
+                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
                             </div>
                         </div>
 

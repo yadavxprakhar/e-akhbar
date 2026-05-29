@@ -82,7 +82,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
      * Authenticates existing user credentials
      */
     const login = async (usernameOrEmail: string, password: string) => {
-        setLoading(true);
         try {
             const response = await api.post('/auth/login', { usernameOrEmail, password });
             const { accessToken, refreshToken, username, email } = response.data;
@@ -101,8 +100,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } catch (error) {
             clearSession();
             throw error;
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -110,14 +107,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
      * Initiates a new user account registration by triggering a secure OTP email dispatch
      */
     const register = async (username: string, email: string, password: string) => {
-        setLoading(true);
         try {
             await api.post('/auth/register/initiate', { username, email, password });
         } catch (error) {
             clearSession();
             throw error;
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -125,7 +119,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
      * Validates the registration OTP and activates the account, storing session tokens
      */
     const verifyOtp = async (email: string, otp: string) => {
-        setLoading(true);
         try {
             const response = await api.post('/auth/register/verify', { email, otp });
             const { accessToken, refreshToken, username, email: savedEmail } = response.data;
@@ -144,8 +137,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } catch (error) {
             clearSession();
             throw error;
-        } finally {
-            setLoading(false);
         }
     };
 

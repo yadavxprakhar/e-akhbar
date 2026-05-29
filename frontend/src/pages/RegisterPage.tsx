@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../store/authContext';
-import { User, Mail, Lock, ArrowRight, Loader2, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { User, Mail, Lock, ArrowRight, Loader2, CheckCircle2, ShieldAlert, Eye, EyeOff } from 'lucide-react';
 
 interface RegisterPageProps {
     onSwitchToLogin: () => void;
@@ -11,6 +11,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) =
     const [username, setUsername] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const [showPassword, setShowPassword] = useState<boolean>(false);
     
     // OTP States
     const [otpMode, setOtpMode] = useState<boolean>(false);
@@ -175,17 +176,42 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) =
                                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: 'hsl(var(--muted))', marginBottom: '8px', fontFamily: 'var(--font-heading)' }}>
                                         PASSWORD
                                     </label>
-                                    <div className="input-group">
+                                    <div className="input-group" style={{ position: 'relative' }}>
                                         <Lock size={18} className="input-icon" />
                                         <input
-                                            type="password"
+                                            type={showPassword ? 'text' : 'password'}
                                             className="form-input with-icon"
                                             placeholder="Minimum 6 characters"
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
                                             disabled={loading}
+                                            style={{ paddingRight: '44px' }}
                                             required
                                         />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            style={{
+                                                position: 'absolute',
+                                                right: '12px',
+                                                top: '50%',
+                                                transform: 'translateY(-50%)',
+                                                background: 'none',
+                                                border: 'none',
+                                                color: 'hsl(var(--muted))',
+                                                cursor: 'pointer',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                padding: '4px',
+                                                transition: 'color 0.2s'
+                                            }}
+                                            onMouseOver={(e) => e.currentTarget.style.color = 'hsl(var(--foreground))'}
+                                            onMouseOut={(e) => e.currentTarget.style.color = 'hsl(var(--muted))'}
+                                            disabled={loading}
+                                            tabIndex={-1}
+                                        >
+                                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        </button>
                                     </div>
                                     {fieldErrors.password && (
                                         <span style={{ color: 'hsl(var(--danger))', fontSize: '0.75rem', fontWeight: 500, marginTop: '4px', display: 'block' }}>
